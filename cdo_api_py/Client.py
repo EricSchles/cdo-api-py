@@ -399,6 +399,9 @@ class Client(BaseClient):
         response = list(self.get('stations', stationid))[0]
         return response.json()
 
+    def can_include_station_meta(self, data_df):
+        return "station" in data_df.columns
+        
     def get_data_by_station(self, datasetid, stationid, startdate=None, enddate=None,
                             return_dataframe=True, include_station_meta=False, **kwargs):
         """
@@ -441,7 +444,7 @@ class Client(BaseClient):
         # return_dataframe or not, the best way to grapple this data is with a dataframe
         data_df = self.results_to_dataframe(results).reset_index()
 
-        if include_station_meta:   # merge metadata into data_df
+        if include_station_meta and self.can_include_station_meta(data_df):   # merge metadata into data_df
             meta_df = pd.DataFrame(station_meta, index=[0])
             data_df = pd.merge(data_df, meta_df, left_on='station', right_on='id')
             del data_df['id']    # this is duplicated with 'station'
