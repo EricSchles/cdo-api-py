@@ -58,6 +58,8 @@ for rowid, station in stations.iterrows():  # remember this is a pandas datafram
         return_dataframe=True,  # this defaults to True
         include_station_meta=True   # flatten station metadata with ghcnd readings
     )
+    if isinstance(station_data, list):
+        continue
     pprint(station_data)
     big_df = pd.concat([big_df, station_data], sort=False)
 
